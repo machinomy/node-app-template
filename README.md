@@ -31,3 +31,17 @@ Hint: Develop with yarn start-dev, run in production with yarn start
 ### Databases
 
 To use Postgres instead of SQLite just rename ormconfig.json to ormconfig.sqlite.json and ormconfig.postgres.json to ormconfig.json
+
+
+### pify
+
+Converts callback to promise. Usage:
+```typescript
+  import { pify } from './util/pify'
+  
+  const result = await pify<string>((cb: (error: Error, signedData: string) => void) => {
+    web3.eth.sign(address, data, cb)
+  })
+ ```
+
+TODO Make pify usage more simple
