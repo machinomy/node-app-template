@@ -1,21 +1,22 @@
+import * as fs from 'fs'
 import * as Koa from 'koa'
-import * as http from 'http'
+import * as https from 'https'
 import * as bodyParser from 'koa-bodyparser'
 import * as session from 'koa-session'
 import * as Router from 'koa-router'
 import Logger from '@machinomy/logger'
 import { getRequestHandler, postRequestHandler } from './handlers'
 
-export class HttpEndpoint {
+export class HttpsEndpoint {
   private readonly app: Koa
   private readonly port: number
   private readonly log: Logger
 
-  private server: http.Server | undefined
+  private server: https.Server
   private readonly router: Router
 
-  constructor (port: number) {
-    this.log = new Logger('httpEndpoint')
+  constructor (port: number, sslKeyPath: string, sslCertPath: string) {
+    this.log = new Logger('httpsEndpoint')
     this.app = new Koa()
     this.app.use(session({
       maxAge: 86400000
@@ -27,7 +28,12 @@ export class HttpEndpoint {
     this.app.use(this.router.routes()).use(this.router.allowedMethods())
     this.port = port
 
-    this.server = http.createServer(this.app.callback())
+    const options = {
+      key: fs.readFileSync('support/ssl/privkey.pem', 'utf8'),
+      cert: fs.readFileSync('support/ssl/cert.pem', 'utf8')
+    }
+
+    this.server = https.createServer(options, this.app.callback())
   }
 
   routesSetup () {
@@ -37,31 +43,25 @@ export class HttpEndpoint {
 
   async listen (): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      const server = this.app.listen(this.port, () => {
-        this.server = server
-        this.log.info(`HttpEndpoint listen on port ${this.port}`)
+      this.server.listen(this.port, () => {
+        this.log.info('listen on port %d', this.port)
         resolve()
       })
-      this.app.onerror = (error: Error) => {
+      this.server.addListener('error', (error: Error) => {
         reject(error)
-      }
+      })
     })
   }
 
   async close (): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (this.server) {
-        this.server.close((error: any) => {
-          if (error) {
-            reject(error)
-          } else {
-            this.server = undefined
-            resolve()
-          }
-        })
-      } else {
-        reject(new Error('HttpEndpoint is not running'))
-      }
+      this.server.close((error: any) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
     })
   }
 }

@@ -5,14 +5,16 @@
   "license": "UNLICENSED",
   "scripts": {
     "prepublish": "yarn lint && yarn build",
-    "lint": "tslint --format stylish --project . --exclude 'node_modules/**/*.ts'",
-    "coverage": "yarn build && jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "lint": "yarn tslint --format stylish --project . --exclude 'node_modules/**/*.ts'",
+    "coverage": "yarn build && yarn jest --coverage && cat ./coverage/lcov.info | coveralls",
     "build": "rm -rf dist/ && tsc --project tsconfig.json",
-    "start": "DEBUG=* yarn build && node-dev dist/src/bin/main.js --config=config.json",
-    "start-dev": "DEBUG=* ts-node-dev src/bin/main.ts --config=config.json",
+    "start": "DEBUG=* yarn build && yarn node-dev dist/bin/main.js --config=config.json",
+    "start-dev": "DEBUG=* yarn ts-node-dev src/bin/main.ts --config=config.json",
     "test": "test-ts && test-rest",
-    "test-ts": "jest",
-    "test-rest": "ts-node test/rest/index.ts"
+    "test-ts": "yarn jest",
+    "test-rest": "yarn ts-node-dev test/rest/index.ts",
+    "create-migration": "yarn typeorm migration:generate -n",
+    "migrate": "exit 0"
   },
   "dependencies": {
     "@machinomy/logger": "^0.2.3",
@@ -22,7 +24,7 @@
     "@types/koa-router": "^7.0.33",
     "@types/koa-session": "^5.7.4",
     "@types/newman": "^3.10.0",
-    "@types/node": "^10.12.10",
+    "@types/node": "^10.12.11",
     "@types/yargs": "^12.0.1",
     "decko": "^1.2.0",
     "json-rpc-ws": "^7.0.0",
@@ -31,6 +33,8 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.0",
     "newman": "^4.2.2",
+    "pg": "^7.7.1",
+    "sqlite3": "^4.0.4",
     "ts-typed-events": "^1.1.1",
     "typeorm": "^0.2.9",
     "yargs": "^12.0.5"
@@ -46,6 +50,6 @@
     "tslint-config-standard-plus": "^2.1.1",
     "ts-jest": "23.10.5",
     "ts-node-dev": "^1.0.0-pre.30",
-    "typescript": "^3.3.0-dev.20181122"
+    "typescript": "^3.3.0-dev.20181214"
   }
 }

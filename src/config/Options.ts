@@ -1,10 +1,12 @@
 import * as yargs from 'yargs'
-import { URL } from 'url'
+import * as path from 'path'
 
 interface Options {
   optionA: string
   optionB: number
   optionC: BigInt
+  sslKeyPath: string
+  sslCertPath: string
 }
 
 // TODO Insert it into class
@@ -21,10 +23,14 @@ namespace Options {
 
   export async function build (args: Array<string>): Promise<Options> {
     const options = await parse(args)
+    const resolvedSSLKeyPath = path.resolve(options.sslKeyPath)
+    const resolvedSSLCertPath = path.resolve(options.sslCertPath)
     return {
       optionA: options.optionA,
       optionB: options.optionB,
-      optionC: options.optionC
+      optionC: options.optionC,
+      sslKeyPath: resolvedSSLKeyPath,
+      sslCertPath: resolvedSSLCertPath
     }
   }
 }

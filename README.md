@@ -5,7 +5,7 @@ You require only remove unnecessary code modules.
 ## Tools:
 
 - Node.js 10.13
-- yarn 1.7
+- yarn 1.12.3
 - TypeScript 3.3
 - TS-Lint
 - typeorm 0.2.9 (any dbms + migrations)
@@ -14,6 +14,7 @@ You require only remove unnecessary code modules.
 - node-dev for autoreload in production (this also allows autoreload of config files) 
 - Use decko's @memoize facility 
 - @machinomy/logger
+- coveralls
 
 ### Testing
 
@@ -25,3 +26,8 @@ Hint: Use BigInt from ES instead of BigNumber. Node 10.4+ & Chrome 67+ supports 
 Hint: Do "yarn global add yarn-completions" for yarn run completions (https://github.com/mklabs/yarn-completions)
 
 Hint: Develop with yarn start-dev, run in production with yarn start
+
+
+### Databases
+
+To use Postgres instead of SQLite just rename ormconfig.json to ormconfig.sqlite.json and ormconfig.postgres.json to ormconfig.json
